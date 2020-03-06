@@ -1,8 +1,7 @@
-# SSMA
+# SSMA (fork)
 
-[![Join the chat at https://gitter.im/simple_static_malware_analyzer/Lobby](https://badges.gitter.im/simple_static_malware_analyzer/Lobby.svg)](https://gitter.im/simple_static_malware_analyzer/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)   [![Build Status](https://travis-ci.org/secrary/SSMA.svg?branch=master)](https://travis-ci.org/secrary/SSMA)
-
-SSMA is a simple malware analyzer written in Python 3. 
+SSMA is a simple malware analyzer written in Python 3. THIS IS NOT THE ORIGINAL PROJECT.
+The original project was made by secrary, but it's not maintained anymore, so I'm keeping it, fixing, uploading and using.
 
 ## Features:
 * Analyze PE file's header and sections (number of sections, entropy of sections/PE file, suspicious section names, suspicious flags in the characteristics of the PE file, etc.)
@@ -33,7 +32,7 @@ SSMA is a simple malware analyzer written in Python 3.
 
 ## Usage
 ```
-git clone https://github.com/secrary/SSMA
+git clone https://github.com/kosmokato/SSMA.git
 
 cd SSMA
 
@@ -44,7 +43,7 @@ python3 ssma.py -h
 
 ## Using virtualenv
 ```
-git clone https://github.com/secrary/SSMA
+git clone https://github.com/kosmokato/SSMA
 cd SSMA
 virtualenv -p python3 env
 source env/bin/activate
@@ -55,10 +54,12 @@ python3 ssma.py -h
 Additional:
   ssdeep - [Installation](https://python-ssdeep.readthedocs.io/en/latest/installation.html)
 
-More: [Simple Static Malware Analyzer](https://secrary.com/SSMA)
+More: [Simple Static Malware Analyzer (original version)](https://secrary.com/SSMA)
 
+## Contributors to the new project
+* [kosmokato](https://github.com/kosmokato)
 
-## Contributors
+## Contributors to the original project
 * [pielco11](https://github.com/pielco11)
 * [firmianay](https://github.com/firmianay)
 * [Evan-Sa](https://github.com/Evan-Sa)
