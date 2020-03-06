@@ -305,7 +305,7 @@ tuned 4 kosmokato
     if args.api_key and internet_connection:
         virus_check = virustotal(args.filename, args.api_key)
         if virus_check[0] == "scan_result":
-            print(colors.BOLD + colors.BLUE + "Virustotal:" + colors.RESET)
+            print(colors.BOLD + colors.BLUE + "Virustotal: [" + str(len(virus_check[1])) + "]" + colors.RESET)
             for n in virus_check[1]:
                 n = n.split("^")
                 print('\t' + colors.CYAN + n[0] + colors.RESET + "-" + colors.LIGHT_RED + n[1] + colors.RESET)
