@@ -8,8 +8,8 @@ def virustotal(filename, api_key):  # ("info", result[])
 
     vt = virus_total_apis.PublicApi(key)
 
-    md5 = hashlib.md5(open(filename, 'rb').read()).hexdigest()
-    response = vt.get_file_report(md5)
+    sha256 = hashlib.sha256(open(filename, 'rb').read()).hexdigest()
+    response = vt.get_file_report(sha256)
 
     if response["response_code"] == 204:
         pass
