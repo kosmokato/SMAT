@@ -23,7 +23,8 @@ def virustotal(filename, api_key):  # ("info", result[])
     elif response_code_ == -2:
         pass
     else:
-        if input("Would you like to upload file to VirusTotal? [Y/n] ") is not "n":
+        print('Not found in VT\n')
+        if input("Would you like to upload file to VirusTotal? [y/N] ") is "y":
             response = vt.scan_file(filename)
             result.append(response["results"]["permalink"])
         else:
