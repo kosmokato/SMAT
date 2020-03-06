@@ -3,48 +3,48 @@ import yara
 
 
 def is_file_packed(filename):
-    if not os.path.exists("rules_compiled/Packers"):
-        os.mkdir("rules_compiled/Packers")
-    for n in os.listdir("rules/Packers"):
-        rule = yara.compile("rules/Packers/" + n)
-        rule.save("rules_compiled/Packers/" + n)
-        rule = yara.load("rules_compiled/Packers/" + n)
+    if not os.path.exists("rules_compiled/packers"):
+        os.mkdir("rules_compiled/packers")
+    for n in os.listdir("rules/packers"):
+        rule = yara.compile("rules/packers/" + n)
+        rule.save("rules_compiled/packers/" + n)
+        rule = yara.load("rules_compiled/packers/" + n)
         m = rule.match(filename)
         if m:
             return m
 
 
 def is_malicious_document(filename):
-    if not os.path.exists("rules_compiled/Malicious_Documents"):
-        os.mkdir("rules_compiled/Malicious_Documents")
-    for n in os.listdir("rules/Malicious_Documents"):
-        rule = yara.compile("rules/Malicious_Documents/" + n)
-        rule.save("rules_compiled/Malicious_Documents/" + n)
-        rule = yara.load("rules_compiled/Malicious_Documents/" + n)
+    if not os.path.exists("rules_compiled/malicious_documents"):
+        os.mkdir("rules_compiled/malicious_documents")
+    for n in os.listdir("rules/malicious_documents"):
+        rule = yara.compile("rules/malicious_documents/" + n)
+        rule.save("rules_compiled/malicious_documents/" + n)
+        rule = yara.load("rules_compiled/malicious_documents/" + n)
         m = rule.match(filename)
         if m:
             return m
 
 
 def is_antidb_antivm(filename):
-    if not os.path.exists("rules_compiled/Antidebug_AntiVM"):
-        os.mkdir("rules_compiled/Antidebug_AntiVM")
-    for n in os.listdir("rules/Antidebug_AntiVM"):
-        rule = yara.compile("rules/Antidebug_AntiVM/" + n)
-        rule.save("rules_compiled/Antidebug_AntiVM/" + n)
-        rule = yara.load("rules_compiled/Antidebug_AntiVM/" + n)
+    if not os.path.exists("rules_compiled/antidebug_antivm"):
+        os.mkdir("rules_compiled/antidebug_antivm")
+    for n in os.listdir("rules/antidebug_antivm"):
+        rule = yara.compile("rules/antidebug_antivm/" + n)
+        rule.save("rules_compiled/antidebug_antivm/" + n)
+        rule = yara.load("rules_compiled/antidebug_antivm/" + n)
         m = rule.match(filename)
         if m:
             return m
 
 
 def check_crypto(filename):
-    if not os.path.exists("rules_compiled/Crypto"):
-        os.mkdir("rules_compiled/Crypto")
-    for n in os.listdir("rules/Crypto"):
-        rule = yara.compile("rules/Crypto/" + n)
-        rule.save("rules_compiled/Crypto/" + n)
-        rule = yara.load("rules_compiled/Crypto/" + n)
+    if not os.path.exists("rules_compiled/crypto"):
+        os.mkdir("rules_compiled/crypto")
+    for n in os.listdir("rules/crypto"):
+        rule = yara.compile("rules/crypto/" + n)
+        rule.save("rules_compiled/crypto/" + n)
+        rule = yara.load("rules_compiled/crypto/" + n)
         m = rule.match(filename)
         if m:
             return m
