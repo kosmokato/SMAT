@@ -107,6 +107,8 @@ tuned 4 kosmokato
     if py_file_location:
         os.chdir(py_file_location)
     filetype = magic.from_file(args.filename, mime=True)
+    if filetype == 'application/zip':
+        print('Compressed .zip file')
     if filetype == 'application/x-dosexec':
         pe = PEScanner(filename=args.filename)
         if args.report == "output":
