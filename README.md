@@ -1,7 +1,7 @@
-# SSMA (fork)
+# SMAT
 
-SSMA is a simple malware analyzer written in Python 3. THIS IS NOT THE ORIGINAL PROJECT.
-The original project was made by secrary, but it's not maintained anymore, so I'm keeping it, fixing, uploading and using.
+SMAT is a simple malware analyzer written in Python 3 and tuned from an older project.
+The original project was made by [secrary](https://github.com/secrary/SSMA), but it's not maintained anymore, so I'm keeping it, fixing, uploading and using.
 
 ## Features:
 * Analyze PE file's header and sections (number of sections, entropy of sections/PE file, suspicious section names, suspicious flags in the characteristics of the PE file, etc.)
@@ -32,7 +32,7 @@ The original project was made by secrary, but it's not maintained anymore, so I'
 
 ## Usage
 ```
-git clone https://github.com/kosmokato/SSMA.git
+git clone https://github.com/kosmokato/SMAT.git
 
 cd SSMA
 
@@ -43,7 +43,7 @@ python3 ssma.py -h
 
 ## Using virtualenv
 ```
-git clone https://github.com/kosmokato/SSMA
+git clone https://github.com/kosmokato/SMAT
 cd SSMA
 virtualenv -p python3 env
 source env/bin/activate
@@ -55,6 +55,11 @@ Additional:
   ssdeep - [Installation](https://python-ssdeep.readthedocs.io/en/latest/installation.html)
 
 More: [Simple Static Malware Analyzer (original version)](https://secrary.com/SSMA)
+
+## upcoming changes
+* .zip, .rar and .gz decompression
+* [yara-rules](https://github.com/Yara-Rules/rules) integration
+* MISP integration
 
 ## Contributors to the new project
 * [kosmokato](https://github.com/kosmokato)
