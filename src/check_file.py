@@ -224,6 +224,7 @@ class PEScanner:
                 info.append("Type: {}".format(magic.from_file(self.filename, mime=True)))
                 info.append("MD5:  {}".format(hashlib.md5(file).hexdigest()))
                 info.append("SHA1: {}".format(hashlib.sha1(file).hexdigest()))
+                info.append("SHA256: {}".format(hashlib.sha256(file).hexdigest()))
                 info.append("Imphash: {}".format(self.get_imphash()))
                 if ssdeep_r:
                     info.append("ssdeep: {}".format(self.get_ssdeep()))
