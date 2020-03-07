@@ -56,10 +56,13 @@ Additional:
 
 More: [Simple Static Malware Analyzer (original version)](https://secrary.com/SSMA)
 
-## upcoming changes
-* .zip, .rar and .gz decompression
-* [yara-rules](https://github.com/Yara-Rules/rules) integration
-* MISP integration
+## Roadmap
+* [x] .zip decompression, 
+* [ ] .rar and .gz decompression
+* [ ] [yara-rules](https://github.com/Yara-Rules/rules) integration
+* [ ] [MISP](https://github.com/MISP/PyMISP) integration
+* [ ] [Radare2](https://github.com/radareorg/radare2) integration
+* [ ] [Munin](https://github.com/Neo23x0/munin) integration
 
 ## Contributors to the new project
 * [kosmokato](https://github.com/kosmokato)
