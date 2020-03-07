@@ -34,21 +34,21 @@ The original project was made by [secrary](https://github.com/secrary/SSMA), but
 ```
 git clone https://github.com/kosmokato/SMAT.git
 
-cd SSMA
+cd SMAT
 
 sudo pip3 install -r requirements.txt
 
-python3 ssma.py -h
+python3 smat.py -h
 ```
 
 ## Using virtualenv
 ```
 git clone https://github.com/kosmokato/SMAT
-cd SSMA
+cd SMAT
 virtualenv -p python3 env
 source env/bin/activate
 pip3 install -r requirements.txt
-python3 ssma.py -h
+python3 smat.py -h
 ```
 
 Additional:
