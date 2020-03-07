@@ -81,7 +81,10 @@ based on secrary' SSMA
 tuned 4 kosmokato
 """ + colors.RESET)
     # Here we must configure things
-    for file in os.listdir(localpath + "/tmp/"): os.remove(localpath + "/tmp/" + file)
+    try:  # let's try to clean ./tmp
+        for file in os.listdir(localpath + "/tmp/"): os.remove(localpath + "/tmp/" + file)
+    except: pass
+        
     if args.update == "yes":
         if os.path.exists("rules"):
             shutil.rmtree("rules")
