@@ -8,9 +8,11 @@
 """
 
 import argparse, os, json
-import shutil, magic, uuid
+import shutil, magic  #, uuid
 import hashlib, contextlib
 from elasticsearch import Elasticsearch
+from zipfile import ZipFile
+import sys
 
 from src import colors
 from src.blacklisted_domain_ip import ransomware_and_malware_domain_check
@@ -33,6 +35,9 @@ def nostderr():
     finally:
         sys.stderr = savestderr
 #####################################
+
+# Global variables
+localpath = os.getcwd()
 
 
 if __name__ == '__main__':
@@ -75,6 +80,8 @@ if __name__ == '__main__':
 based on secrary' SSMA
 tuned 4 kosmokato
 """ + colors.RESET)
+    # Here we must configure things
+    for file in os.listdir(localpath + "/tmp/"): os.remove(localpath + "/tmp/" + file)
     if args.update == "yes":
         if os.path.exists("rules"):
             shutil.rmtree("rules")
@@ -108,7 +115,25 @@ tuned 4 kosmokato
         os.chdir(py_file_location)
     filetype = magic.from_file(args.filename, mime=True)
     if filetype == 'application/zip':
-        print('Compressed .zip file')
+        print('[i] Compressed .zip file found')
+        try:
+            ZipFile(args.filename, 'r').extractall('./tmp')  # extracts the file into a temporal folder
+        except:
+            print("[!] There was a problem extracting the compressed file.")
+            pswd = input("[?] May it has a password? (empty for \'infected\'):")
+            if pswd is "": pswd = 'infected'
+            ZipFile(args.filename, 'r').extractall(path='./tmp', pwd = bytes(pswd, 'utf-8'))
+        print("[i] There was several files inside:")
+        i = 0
+        for compressed_file in os.listdir("./tmp"):
+            print("\t[" + str(i) + "] " + compressed_file)
+            i += 1
+        args.filename = input("[?] wich one do you want to analyze? > ")
+        try:
+            args.filename = localpath + "/tmp/" + os.listdir("./tmp")[int(args.filename)]
+        except:
+            args.filename = localpath + "/tmp/" + args.filename
+        filetype = magic.from_file(args.filename, mime=True)
     if filetype == 'application/x-dosexec':
         pe = PEScanner(filename=args.filename)
         if args.report == "output":
