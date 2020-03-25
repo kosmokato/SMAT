@@ -4,14 +4,13 @@
 @author:       Kosmokato, from Lasha Khasaia
 @license:      GNU General Public License 3.0
 @contact:      @kosmokato
-@Description:  SMAT - Static Malware Analyzer Tuned
+@Description:  SMAT - Static Malware Analyzer Tool
 """
 
 import argparse, os, json
 import shutil, magic  #, uuid
 import hashlib, contextlib
 from elasticsearch import Elasticsearch
-from zipfile import ZipFile
 import sys
 
 from src import colors
@@ -24,6 +23,7 @@ from src.file_strings import get_strings
 from src.mass_analysis import start_scan
 from src.report import pe_report, elf_report, others_report
 from src import markdown
+from src import decompress
 
 ####### NEED THIS FOR ELASTICSEARCH
 @contextlib.contextmanager
@@ -38,7 +38,6 @@ def nostderr():
 
 # Global variables
 localpath = os.getcwd()
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple Static Malware Analyzer")
@@ -56,8 +55,7 @@ if __name__ == '__main__':
 
     if args.report == "elasticsearch":
         args.report = "output"
-    else:
-        pass
+    else: pass
 
     # Added by Yang
     if args.directory:
@@ -67,23 +65,23 @@ if __name__ == '__main__':
         print(colors.BOLD + colors.RED + "option error, please select a file or directory, run ssma.py -h")
         exit()
 
-    if args.report == "output":
-        pass
+    if args.report == "output": pass
     else:
         print(colors.CYAN + """
 ███████╗███╗   ███╗ █████╗ ████████╗
 ██╔════╝████╗ ████║██╔══██╗╚══██╔══╝ Static
 ███████╗██╔████╔██║███████║   ██║    Malware
 ╚════██║██║╚██╔╝██║██╔══██║   ██║    Analyzer
-███████║██║ ╚═╝ ██║██║  ██║   ██║    Tuned
+███████║██║ ╚═╝ ██║██║  ██║   ██║    Tool
 ╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   
 based on secrary' SSMA
-tuned 4 kosmokato
+Tuned 4 kosmokato
 """ + colors.RESET)
     # Here we must configure things
     try:  # let's try to clean ./tmp
-        for file in os.listdir(localpath + "/tmp/"): os.remove(localpath + "/tmp/" + file)
-    except: pass
+        shutil.rmtree(localpath + "/tmp/", ignore_errors=True)
+        os.mkdir(localpath + "/tmp/")
+    except Exception as e: print(e)
         
     if args.update == "yes":
         if os.path.exists("rules"):
@@ -95,12 +93,9 @@ tuned 4 kosmokato
         download_yara_rules_git()
         print(colors.BOLD + colors.GREEN + "[+] Updated for Yara-Rules!" + colors.RESET)
         print()
-        if not args.filename:
-            exit()
-        else:
-            pass
-    else:
-        pass
+        if not args.filename: exit()
+        else: pass
+    else: pass
     try:
         os.path.realpath(args.filename)
     except:
@@ -114,46 +109,27 @@ tuned 4 kosmokato
 
     py_file_location = os.path.dirname(__file__)
     args.filename = os.path.realpath(args.filename)
+
     if py_file_location:
         os.chdir(py_file_location)
+
     filetype = magic.from_file(args.filename, mime=True)
     if filetype == 'application/zip':
-        print('[i] Compressed .zip file found')
-        try:
-            ZipFile(args.filename, 'r').extractall('./tmp')  # extracts the file into a temporal folder
-        except:
-            print("[!] There was a problem extracting the compressed file.")
-            pswd = input("[?] May it has a password? (empty for \'infected\'):")
-            if pswd is "": pswd = 'infected'
-            ZipFile(args.filename, 'r').extractall(path='./tmp', pwd = bytes(pswd, 'utf-8'))
-        print("[i] There was several files inside:")
-        i = 0
-        for compressed_file in os.listdir("./tmp"):
-            print("\t[" + str(i) + "] " + compressed_file)
-            i += 1
-        args.filename = input("[?] wich one do you want to analyze? > ")
-        try:
-            args.filename = localpath + "/tmp/" + os.listdir("./tmp")[int(args.filename)]
-        except:
-            args.filename = localpath + "/tmp/" + args.filename
-        filetype = magic.from_file(args.filename, mime=True)
+        [filetype, args.filename] = decompress.zipfile(args.filename)  # [filetype, filename]
+
     if filetype == 'application/x-dosexec':
         pe = PEScanner(filename=args.filename)
-        if args.report == "output":
-            pass
+        if args.report == "output": pass
         else:
             print(colors.BOLD + colors.BLUE + "File Details: " + colors.RESET)
         for n in pe.file_info(args.report, False):
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print('\t', n)
-        if args.report == "output":
-            pass
+        if args.report == "output": pass
         else:
             print()
             print("================================================================================")
-
 
         if args.report:
             if not os.path.exists("analysis_report"):
@@ -164,21 +140,17 @@ tuned 4 kosmokato
             print("================================================================================")
             pe.overlay()
 
-        if args.report == "output":
-            pass
+        if args.report == "output": pass
         else:
             print("================================================================================")
 
-
         _tls = pe.checkTSL()
         if _tls is not None:
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(colors.RED + "The executable contains a .tls section.\n" + colors.RESET + "A TLS callback can be used to execute code before the entry point \
                 and therefore execute secretly in a debugger.")
                 print("================================================================================")
-
 
         check_file_header = pe.check_file_header(args.report)
         continue_message = False
@@ -190,24 +162,21 @@ tuned 4 kosmokato
 
         if any(tr[1] for tr in check_file_header["flags"]):
             continue_message = True
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(colors.LIGHT_RED + "Suspicious flags in the characteristics of the PE file: " + colors.RESET)
                 for n in check_file_header["flags"]:
                     if n[1]:
                         print(colors.RED + n[0] + colors.RESET + " flag is set - {}".format(n[2]))
                 print()
-        if args.report == "output":
-            pass
+        if args.report == "output": pass
         else:
             if continue_message:
                 print("================================================================================")
 
         check_date_result = pe.check_date(False)
         if check_date_result:
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(check_date_result)
                 print()
@@ -215,8 +184,7 @@ tuned 4 kosmokato
 
 
         check_imports_result = pe.check_imports()
-        if args.report == "output":
-            pass
+        if args.report == "output": pass
         else:
             if check_imports_result:
                 print(
@@ -234,8 +202,7 @@ tuned 4 kosmokato
     elif filetype == 'application/x-executable':
         elf = ELFScanner(filename=args.filename)
 
-        if args.report == "output":
-            pass
+        if args.report == "output": pass
         else:
             print(colors.BOLD + colors.BLUE + "File Details: " + colors.RESET)
         for n in elf.file_info(args.report):
@@ -243,8 +210,7 @@ tuned 4 kosmokato
                 print('\t', n)
             else:
                 print('\t', n)
-        if args.report == "output":
-            pass
+        if args.report == "output": pass
         else:
             print()
             print("================================================================================")
@@ -252,8 +218,7 @@ tuned 4 kosmokato
 
         depends = elf.dependencies()
         if depends:
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(colors.BOLD + colors.BLUE + "Dependencies: " + colors.RESET)
                 for line in depends:
@@ -265,8 +230,7 @@ tuned 4 kosmokato
 
         prog_header = elf.program_header()
         if prog_header:
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(colors.BOLD + colors.BLUE + "Program Header Information: " + colors.RESET)
                 for line in prog_header:
@@ -278,8 +242,7 @@ tuned 4 kosmokato
 
         sect_header = elf.section_header()
         if sect_header:
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(colors.BOLD + colors.BLUE + "Section Header Information: " + colors.RESET)
                 for line in sect_header:
@@ -291,8 +254,7 @@ tuned 4 kosmokato
 
         syms = elf.symbols()
         if syms:
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(colors.BOLD + colors.BLUE + "Symbol Information: " + colors.RESET)
                 for line in syms:
@@ -304,8 +266,7 @@ tuned 4 kosmokato
 
         checksec = elf.checksec()
         if checksec:
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(colors.BOLD + colors.BLUE + "CheckSec Information: " + colors.RESET)
                 for key, value in checksec.items():
@@ -319,12 +280,31 @@ tuned 4 kosmokato
                 os.mkdir("analysis_report")
             file_report = (elf, args.report, args.strings)
 
+    # It's a .DOC?
+    elif filetype == 'application/msword':
+        print('[i] MS-Word file found (.doc)')
+    elif filetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        print('[i] MS-Word file found (.docx)')
+
+    # It's a .XLS?
+    elif filetype == 'application/vnd.ms-excel':
+        print('[i] MS-Excel file found (.xls)')
+    elif filetype == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        print('[i] MS-Excel file found (.xlsx)')
+
+    # It's a .PPT?
+    elif filetype == 'application/vnd.ms-powerpoint':
+        print('[i] MS-PowerPoint file found (.ppt)')
+    elif filetype == 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+        print('[i] MS-PowerPoint file found (.pptx)')
+
     else:
         print(colors.BOLD + colors.BLUE + "File Details: " + colors.RESET)
         for n in file_info(args.filename):
             print('\t', n)
         print()
         print("================================================================================")
+        decompress.genericCompressedFile(args.filename)  # try to decompress
 
 
         if args.report:
@@ -361,8 +341,7 @@ tuned 4 kosmokato
     if strings[0]:
         if internet_connection:
             mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(colors.BOLD + colors.BLUE + "Possible domains in strings of the file: " + colors.RESET)
                 mal_domains = ransomware_and_malware_domain_check(list(strings[0]))
@@ -386,8 +365,7 @@ tuned 4 kosmokato
 
 
     if strings[1]:
-        if args.report == "output":
-            pass
+        if args.report == "output": pass
         else:
             print(colors.BOLD + colors.BLUE + "Possible IP addresses in strings of the file: " + colors.RESET)
             for n in strings[1]:
@@ -397,8 +375,7 @@ tuned 4 kosmokato
 
 
     if strings[2]:
-        if args.report == "output":
-            pass
+        if args.report == "output": pass
         else:
             print(colors.BOLD + colors.BLUE + "Possible E-Mail addresses in strings of the file:" + colors.RESET)
             for n in strings[2]:
@@ -424,8 +401,7 @@ tuned 4 kosmokato
         file_report.domains(strings_result)
 
     if filetype == 'application/x-dosexec' or filetype == 'application/x-executable' or args.document:
-        if args.report == "output":
-            pass
+        if args.report == "output": pass
         else:
             print(
                 colors.BOLD + colors.BLUE + "Scan file using Yara-rules.\nWith Yara rules you can create a \"description\" of malware families to detect new samples.\n" + colors.BOLD + colors.CYAN + "\tFor more information: https://virustotal.github.io/yara/\n" + colors.RESET)
@@ -434,8 +410,7 @@ tuned 4 kosmokato
         if not os.path.exists("rules_compiled"):
             os.mkdir("rules_compiled")
         if not os.listdir("rules"):
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(colors.BOLD + colors.CYAN + "Downloading Yara-rules... \n" + colors.RESET)
                 print()
@@ -443,8 +418,7 @@ tuned 4 kosmokato
         if filetype == 'application/x-dosexec':
             malicious_software = is_malware(filename=args.filename)
             if malicious_software:
-                if args.report == "output":
-                    pass
+                if args.report == "output": pass
                 else:
                     print(
                         colors.BOLD + colors.BLUE + "These Yara rules specialised on the identification of well-known malware.\nResult: " + colors.RESET)
@@ -459,8 +433,7 @@ tuned 4 kosmokato
 
             packed = is_file_packed(filename=args.filename)
             if packed:
-                if args.report == "output":
-                    pass
+                if args.report == "output": pass
                 else:
                     print(
                         colors.BOLD + colors.BLUE + "These Yara Rules aimed to detect well-known software packers, that can be used by malware to hide itself.\nResult: " + colors.RESET)
@@ -475,8 +448,7 @@ tuned 4 kosmokato
 
             crypto = check_crypto(filename=args.filename)
             if crypto:
-                if args.report == "output":
-                    pass
+                if args.report == "output": pass
                 else:
                     print(
                         colors.BOLD + colors.BLUE + "These Yara rules aimed to detect the existence of cryptographic algorithms." + colors.RESET)
@@ -492,8 +464,7 @@ tuned 4 kosmokato
 
             anti_vm = is_antidb_antivm(filename=args.filename)
             if anti_vm:
-                if args.report == "output":
-                    pass
+                if args.report == "output": pass
                 else:
                     print(
                         colors.BOLD + colors.BLUE + "These Yara Rules aimed to detect anti-debug and anti-virtualization techniques used by malware to evade automated analysis.\nResult: " + colors.RESET)
@@ -511,8 +482,7 @@ tuned 4 kosmokato
                 yara = str(os.path.realpath(args.yara))
                 your_target = is_your_target(args.filename, yara)
                 if your_target:
-                    if args.report == "output":
-                        pass
+                    if args.report == "output": pass
                     else:
                         print(
                             colors.BOLD + colors.BLUE + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
@@ -576,8 +546,7 @@ tuned 4 kosmokato
                 yara = str(os.path.realpath(args.yara))
                 your_target = is_your_target(args.filename, yara)
                 if your_target:
-                    if args.report == "output":
-                        pass
+                    if args.report == "output": pass
                     else:
                         print(
                             colors.BOLD + colors.BLUE + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
@@ -605,8 +574,7 @@ tuned 4 kosmokato
 
         if args.document:
             malicious_document = is_malicious_document(filename=args.filename)
-            if args.report == "output":
-                pass
+            if args.report == "output": pass
             else:
                 print(
                     colors.BOLD + colors.BLUE + "These Yara Rules to be used with documents to find if they have been crafted to leverage malicious code.\nResult: " + colors.RESET)
@@ -624,8 +592,7 @@ tuned 4 kosmokato
                 yara = str(os.path.realpath(args.yara))
                 your_target = is_your_target(args.filename, yara)
                 if your_target:
-                    if args.report == "output":
-                        pass
+                    if args.report == "output": pass
                     else:
                         print(
                             colors.BOLD + colors.BLUE + "These Yara Rules are created by yourself and aimed to detecte something you need.\nResult: " + colors.RESET)
@@ -685,15 +652,13 @@ tuned 4 kosmokato
                     with nostderr():
                         es = Elasticsearch(["elasticsearch", "127.0.0.1", os.environ.get("MALICE_ELASTICSEARCH")])
                         res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=body)
-                except:
-                    pass
+                except: pass
             else:
                 print(rDump)
                 try:
                     with nostderr():
                         es = Elasticsearch(["elasticsearch", "127.0.0.1", os.environ.get("MALICE_ELASTICSEARCH")])
                         res = es.update(index="malice", doc_type='sample', id=os.environ.get('MALICE_SCANID',hashFile), body=body)
-                except:
-                    pass
+                except: pass
     else:
         print(colors.BLUE + "Ups... " + colors.CYAN + "That's all :)" + colors.RESET + "\n")
