@@ -1,6 +1,6 @@
 # SMAT
 
-SMAT is a simple malware analyzer written in Python 3 and tuned from an older project.
+SMAT is a simple malware analyzer tool written in Python 3 and tuned from an older project.
 The original project was made by [secrary](https://github.com/secrary/SSMA), but it's not maintained anymore, so I'm keeping it, fixing, uploading and using.
 
 ## Features:
@@ -29,6 +29,8 @@ The original project was made by [secrary](https://github.com/secrary/SSMA), but
 * Generate json format report.
 
 * Mass analysis by specifying a folder.
+
+* Uncompress compressed files.
 
 ## Usage
 ```
