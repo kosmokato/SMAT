@@ -10,4 +10,4 @@ python:
 install:
   - pip install -r requirements.txt
 
-script: python ssma.py -h
+script: python smat.py -h
