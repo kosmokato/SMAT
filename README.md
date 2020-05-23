@@ -3,6 +3,9 @@
 SMAT is a simple malware analyzer tool written in Python 3 and tuned from an older project.
 The original project was made by [secrary](https://github.com/secrary/SSMA), but it's not maintained anymore, so I'm keeping it, fixing, uploading and using.
 
+Note: at some point of 2020' summer we will rework the whole project from zero, keeping the essence but changing the tools for a more efficient experience. The readmap of updates is now the roadmap of dev.
+
+
 ## Features:
 * Analyze PE file's header and sections (number of sections, entropy of sections/PE file, suspicious section names, suspicious flags in the characteristics of the PE file, etc.)
 
